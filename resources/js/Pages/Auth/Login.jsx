@@ -46,6 +46,7 @@ export default function Login() {
                         color: "red",
                         title: "Failed to login!",
                         message: errors[0],
+                        position: "top-center",
                     });
                 } else {
                     form.setErrors({
@@ -109,7 +110,12 @@ export default function Login() {
                             </Anchor>
                         </Group>
 
-                        <Button type="submit" fullWidth mt="md">
+                        <Button
+                            color="rgba(69, 69, 69, 1)"
+                            type="submit"
+                            fullWidth
+                            mt="md"
+                        >
                             Login
                         </Button>
                     </Stack>

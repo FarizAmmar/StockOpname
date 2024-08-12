@@ -7,14 +7,14 @@ export default function Sidebar({ className, title }) {
     const tabs = {
         item: [
             { link: route("dashboard"), label: "Dashboard", icon: Gauge },
-            { link: "/product", label: "Product", icon: Package },
+            { link: route("product.index"), label: "Product", icon: Package },
         ],
     };
 
     return (
         <nav className={className}>
             {/* Sidebar Header */}
-            <header className="bg-zinc-50 flex items-center space-x-4 rounded shadow w-full p-1">
+            <header className="bg-white flex items-center space-x-4 rounded shadow w-full p-1">
                 <Avatar src="/assets/image/Letter W.jpeg" />
                 <Title order={5}>Stock Opname</Title>
             </header>
@@ -49,10 +49,11 @@ function NavbarLink({ icon: Icon, label, link, title }) {
             transitionProps={{ transition: "skew-up", duration: 300 }}
         >
             <Link
+                href={link}
                 className={`${
                     label === title
                         ? "bg-zinc-800 text-white"
-                        : "hover:bg-zinc-100 hover:text-zinc-800 hover:shadow text-zinc-500"
+                        : "hover:bg-white hover:text-zinc-800 hover:shadow text-zinc-500"
                 } flex items-center  rounded space-x-3 p-3 transition duration-300`}
             >
                 <Icon size={20} />

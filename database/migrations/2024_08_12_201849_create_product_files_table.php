@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('product_files', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')
+            $table->foreignId('product_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->string('code')->unique();
-            $table->string('name');
-            $table->double('price');
-            $table->string('location');
-            $table->integer('initial_stock');
+            $table->string('file_name');
+            $table->string('original_name');
+            $table->string('file_size');
+            $table->string('ext');
+            $table->string('path');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('product_files');
     }
 };

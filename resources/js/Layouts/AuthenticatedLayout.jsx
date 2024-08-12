@@ -5,7 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 export default function Authenticated({ title, className, children }) {
     // Mantine Hooks
-    const [sidebarOpened, { toggle: toggleSidebar }] = useDisclosure(false);
+    const [sidebarOpened, { toggle: toggleSidebar }] = useDisclosure(true);
 
     return (
         <>
@@ -15,7 +15,7 @@ export default function Authenticated({ title, className, children }) {
             <div className="flex min-h-screen">
                 {/* Sidebar section */}
                 <section
-                    className={`transition-all duration-300 overflow-hidden ${
+                    className={`hidden md:block transition-all bg-zinc-100 duration-300 overflow-hidden ${
                         sidebarOpened ? "w-64" : "w-0"
                     }`}
                 >
@@ -23,7 +23,7 @@ export default function Authenticated({ title, className, children }) {
                 </section>
 
                 {/* Section main layout */}
-                <section className="flex-1 bg-zinc-100">
+                <section className="flex-1 ">
                     {/* Headers */}
                     <header>
                         <Navbar

@@ -6,19 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Product extends Model
+class ProductFile extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'price',
-        'location',
-        'initial_stock'
+        'file_name',
+        'original_name',
+        'file_size',
+        'ext',
+        'path'
     ];
 
-    public function category(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Product::class);
     }
 }

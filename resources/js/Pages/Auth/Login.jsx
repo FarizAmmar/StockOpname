@@ -111,7 +111,7 @@ export default function Login() {
                         </Group>
 
                         <Button
-                            color="rgba(69, 69, 69, 1)"
+                            color="rgba(50, 50, 50, 1)"
                             type="submit"
                             fullWidth
                             mt="md"

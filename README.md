@@ -1,66 +1,77 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1>Stock Opname</h1>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<p><strong>Stock Opname</strong> adalah aplikasi yang memungkinkan pengguna untuk mencatat dan memantau stok barang, termasuk barang masuk dan keluar. Aplikasi ini dikembangkan menggunakan Laravel sebagai backend dan React sebagai frontend.</p>
 
-## About Laravel
+<h2>Fitur Utama</h2>
+<ul>
+    <li><strong>Manajemen Stok</strong>: Memungkinkan pencatatan stok barang secara akurat.</li>
+    <li><strong>Barang Masuk/Keluar</strong>: Mencatat transaksi barang masuk dan keluar.</li>
+    <li><strong>Laporan Mingguan</strong>: Menyediakan laporan mingguan terkait pergerakan stok.</li>
+</ul>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<h2>Persyaratan Sistem</h2>
+<p>Pastikan bahwa Anda telah menginstal perangkat berikut di sistem Anda:</p>
+<ul>
+    <li><strong>PHP</strong> >= 8.1</li>
+    <li><strong>Composer</strong></li>
+    <li><strong>Node.js</strong> >= 16.x</li>
+    <li><strong>NPM</strong> atau <strong>Yarn</strong></li>
+    <li><strong>MySQL</strong> atau <strong>MariaDB</strong> (atau database lain yang didukung Laravel)</li>
+</ul>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<h2>Instalasi</h2>
+<p>Ikuti langkah-langkah di bawah ini untuk menginstal aplikasi di lingkungan lokal Anda:</p>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<h3>1. Clone Repository</h3>
+<pre><code>git clone https://github.com/FarizAmmar/StockOpname.git
+cd stock-opname</code></pre>
 
-## Learning Laravel
+<h3>2. Install Dependencies</h3>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<h4>Backend (Laravel)</h4>
+<pre><code>composer install</code></pre>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+<h4>Frontend (React)</h4>
+<pre><code>npm install
+# atau jika menggunakan yarn
+yarn install</code></pre>
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+<h3>3. Konfigurasi Environment</h3>
+<p>Salin file <code>.env.example</code> menjadi <code>.env</code> dan sesuaikan konfigurasi database serta pengaturan lainnya.</p>
+<pre><code>cp .env.example .env</code></pre>
 
-## Laravel Sponsors
+<p>Generate aplikasi key:</p>
+<pre><code>php artisan key:generate</code></pre>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+<h3>4. Migrasi dan Seed Database</h3>
+<p>Jalankan perintah berikut untuk membuat tabel-tabel di database:</p>
+<pre><code>php artisan migrate</code></pre>
 
-### Premium Partners
+<p>Jika terdapat seeder, jalankan:</p>
+<pre><code>php artisan db:seed</code></pre>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+<h3>5. Build Frontend</h3>
+<p>Jalankan perintah berikut untuk mengompilasi aset frontend:</p>
+<pre><code>npm run build
+# atau jika menggunakan yarn
+yarn build</code></pre>
 
-## Contributing
+<h3>6. Menjalankan Aplikasi</h3>
+<p>Jalankan perintah berikut untuk memulai server lokal:</p>
+<pre><code>php artisan serve</code></pre>
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+<p>Dan jalankan frontend menggunakan:</p>
+<pre><code>npm run dev
+# atau jika menggunakan yarn
+yarn dev</code></pre>
 
-## Code of Conduct
+<p>Aplikasi dapat diakses di <code>http://localhost:8000</code>.</p>
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+<h2>Penggunaan</h2>
+<p>Setelah aplikasi berhasil diinstal, Anda dapat mulai menggunakan fitur-fitur yang tersedia untuk mengelola stok barang.</p>
 
-## Security Vulnerabilities
+<h2>Contributing</h2>
+<p>Jika Anda ingin berkontribusi pada proyek ini, harap baca terlebih dahulu panduan kontribusi di <code>CONTRIBUTING.md</code>.</p>
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+<h2>Lisensi</h2>
+<p>Proyek ini dilisensikan di bawah <a href="LICENSE">MIT License</a>.</p>

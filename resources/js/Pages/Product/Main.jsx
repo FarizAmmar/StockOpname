@@ -128,9 +128,11 @@ function NewProduct({ openNewModal, closeNewModal }) {
                     message: response.props.flash.message,
                     position: "top-center",
                 });
+                closeNewModal(false);
+                form.reset();
+                setPreviews("");
             },
             onFinish: () => {
-                closeNewModal(false);
                 closeLoading();
             },
             onError: (errors) => {

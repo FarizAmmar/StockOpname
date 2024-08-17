@@ -22,7 +22,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:20'],
+            'code' => ['required', 'string', 'max:20', 'unique:products,code'],
             'name' => ['required', 'string', 'max:50'],
             'category' => ['required', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
@@ -41,6 +41,7 @@ class ProductRequest extends FormRequest
     {
         return [
             'code.required' => 'Product code is required.',
+            'code.unique' => 'Product code is already exist.',
             'name.required' => 'Product name is required.',
             'category.required' => 'Category is required.',
             'price.required' => 'Price is required.',

@@ -72,6 +72,8 @@ class ProductController extends Controller
                 'success' => 'Created!',
                 'message' => 'Product created successfully'
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
         } catch (\Throwable $th) {
             return back()->withError($th->getMessage());
         }

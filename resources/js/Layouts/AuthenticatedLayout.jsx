@@ -27,6 +27,7 @@ export default function Authenticated({ title, className, children }) {
                     {/* Headers */}
                     <header>
                         <Navbar
+                            title={title}
                             sidebarOpened={sidebarOpened}
                             toggleSidebar={toggleSidebar}
                         />

@@ -1,11 +1,44 @@
 import { Link } from "@inertiajs/react";
-import { IconLogout, IconUserCircle } from "@tabler/icons-react";
-import { Avatar, Burger, Drawer, Menu, MenuDivider, rem } from "@mantine/core";
+import {
+    IconLogout,
+    IconUserCircle,
+    IconGauge,
+    IconPackage,
+} from "@tabler/icons-react";
+import {
+    Avatar,
+    Burger,
+    Drawer,
+    Menu,
+    MenuDivider,
+    NavLink,
+    rem,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Gauge, Package } from "lucide-react";
 
-export default function Navbar({ sidebarOpened, toggleSidebar, className }) {
+export default function Navbar({
+    sidebarOpened,
+    toggleSidebar,
+    className,
+    title,
+}) {
+    // Mantine Hook
     const [mobileSidebar, { open: openMobile, close: closeMobile }] =
         useDisclosure(false);
+
+    // Sidebar mobile tab item
+    const tabs = {
+        item: [
+            { link: route("dashboard"), label: "Dashboard", icon: Gauge },
+            {
+                link: route("product.index"),
+                label: "Product",
+                icon: Package,
+            },
+        ],
+    };
+
     return (
         <nav className={`p-3 ${className}`}>
             <div className="flex justify-between items-center">
@@ -26,7 +59,7 @@ export default function Navbar({ sidebarOpened, toggleSidebar, className }) {
                     size="sm"
                     lineSize={1}
                     opened={mobileSidebar}
-                    onClick={() => openMobile()}
+                    onClick={openMobile}
                 />
 
                 {/* Menu Dropdown */}
@@ -72,7 +105,19 @@ export default function Navbar({ sidebarOpened, toggleSidebar, className }) {
                 onClose={closeMobile}
                 overlayProps={{ backgroundOpacity: 0.5, blur: 4 }}
                 size="xs"
-            ></Drawer>
+            >
+                {tabs.item.map((tab, index) => (
+                    <NavLink
+                        key={index}
+                        href={tab.link}
+                        label={tab.label}
+                        leftSection={<tab.icon size={20} />}
+                        active={tab.label === title ? true : false}
+                        variant="filled"
+                        color="rgba(50, 50, 50, 1)"
+                    />
+                ))}
+            </Drawer>
         </nav>
     );
 }

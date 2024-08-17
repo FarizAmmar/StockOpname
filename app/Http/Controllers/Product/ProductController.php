@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\ProductRequest;
+use App\Models\Product;
+use App\Models\ProductFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -28,9 +32,49 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //
+        try {
+            $validatedData = $request->validated();
+
+            // Create product
+            $product = new Product();
+            $product->category_id = $validatedData['category'];
+            $product->code = $validatedData['code'];
+            $product->name = $validatedData['name'];
+            $product->price = $validatedData['price'];
+            $product->location = $validatedData['location'];
+            $product->initial_stock = $validatedData['initial_stock'];
+            $product->save();
+
+            // Handle file uploads
+            $files = $request->file('files');
+            if ($files) {
+                foreach ($files as $file) {
+                    $originalName = $file->getClientOriginalName();
+                    $path = $file->store('products', 'public');
+                    $fileSize = $file->getSize();
+                    $extension = $file->getClientOriginalExtension();
+
+                    // Create product file record
+                    $product_file = new ProductFile();
+                    $product_file->product_id = $product->id;
+                    $product_file->file_name = basename($path);
+                    $product_file->original_name = $originalName;
+                    $product_file->file_size = $fileSize;
+                    $product_file->ext = $extension;
+                    $product_file->path = $path;
+                    $product_file->save();
+                }
+            }
+
+            return back()->with([
+                'success' => 'Created!',
+                'message' => 'Product created successfully'
+            ]);
+        } catch (\Throwable $th) {
+            return back()->withError($th->getMessage());
+        }
     }
 
     /**

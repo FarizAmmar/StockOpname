@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,6 +20,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'Superadmin',
             'email' => 'test@gmail.com',
             'password' => 'superadmin',
+        ]);
+
+        Category::create([
+            'slug' => 'packaging',
+            'name' => 'Packaging',
+        ]);
+
+        Category::create([
+            'slug' => 'prasmanan',
+            'name' => 'Prasmanan',
         ]);
     }
 }

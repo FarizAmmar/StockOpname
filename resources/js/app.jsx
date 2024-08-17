@@ -7,7 +7,9 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 import { createTheme, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+
 import "@mantine/core/styles.css";
+import "@mantine/dropzone/styles.css";
 import "@mantine/notifications/styles.css";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";

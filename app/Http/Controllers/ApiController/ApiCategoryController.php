@@ -1,19 +1,33 @@
 <?php
 
-namespace App\Http\Controllers\Product;
+namespace App\Http\Controllers\ApiController;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class ApiCategoryController extends Controller
 {
+    protected $category_model;
+
+    public function __construct(Category $category)
+    {
+        $this->category_model = $category;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // 
+        // Get all category data
+        try {
+            // get data
+            return response()->json(['category' => $this->category_model->all()], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json($th->getMessage(), 400);
+        }
     }
 
     /**

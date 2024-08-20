@@ -35,8 +35,9 @@ import {
     Badge,
     Menu,
     Pagination,
+    Skeleton,
 } from "@mantine/core";
-import { AgGridReact } from "ag-grid-react";
+import CardLoading from "@/Components/CardLoading";
 
 export default function Product() {
     const [newModal, { open: openNew, close: closeNew }] = useDisclosure(false);
@@ -83,105 +84,112 @@ export default function Product() {
     );
 }
 
+// Product card item
 function ProductCard({ product }) {
     const [opened, { toggle }] = useDisclosure(false);
+    const [loading, setLoading] = useState(true);
 
-    const handleMenuAction = (action) => {
-        console.log(`Product ID: ${product.id}, Action: ${action}`);
-    };
+    const handleMenuAction = (action) => {};
+
+    useEffect(() => {
+        setLoading(true);
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [product]);
 
     return (
         <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
             <Paper shadow="xs" p="md">
-                <Grid>
-                    <Grid.Col span={12}>
-                        <div className="flex justify-between">
-                            <Text fz={20} fw={500} mb="xs">
-                                {product.name}
-                            </Text>
-                            <Menu
-                                shadow="md"
-                                width={200}
-                                opened={opened}
-                                onChange={() => toggle()}
-                            >
-                                <Menu.Target>
-                                    <ActionIcon
-                                        variant="outline"
-                                        color="gray"
-                                        onClick={toggle}
-                                    >
-                                        <EllipsisVertical size={16} />
-                                    </ActionIcon>
-                                </Menu.Target>
-                                <Menu.Dropdown>
-                                    <Menu.Label>Action</Menu.Label>
-                                    <Menu.Item
-                                        leftSection={<Pencil size={16} />}
-                                        onClick={() => handleMenuAction("Edit")}
-                                    >
-                                        Edit
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        color="red"
-                                        leftSection={<Trash size={16} />}
-                                        onClick={() =>
-                                            handleMenuAction("Delete")
-                                        }
-                                    >
-                                        Delete
-                                    </Menu.Item>
-                                </Menu.Dropdown>
-                            </Menu>
-                        </div>
-                    </Grid.Col>
-                    <Grid.Col span={12}>
-                        <Grid>
-                            <Grid.Col span={5}>
-                                <Image
-                                    radius="sm"
-                                    h={150}
-                                    w={150}
-                                    src={`/storage/${product.product_files[0].path}`}
-                                    alt={product.name}
-                                />
-                            </Grid.Col>
-                            <Grid.Col span={7}>
-                                <Stack spacing="xs">
-                                    <Text size="sm">
-                                        Kategori : {product.category.name}
-                                    </Text>
-                                    <Text size="sm">
-                                        Stock Awal : {product.initial_stock}
-                                    </Text>
-                                    <Text size="sm">
-                                        Location : {product.location}
-                                    </Text>
-                                </Stack>
-                            </Grid.Col>
-                        </Grid>
-                    </Grid.Col>
-                </Grid>
+                {loading ? (
+                    <CardLoading />
+                ) : (
+                    <Grid>
+                        <Grid.Col span={12}>
+                            <div className="flex justify-between">
+                                <Text fz={20} fw={500} mb="xs">
+                                    {product.name}
+                                </Text>
+                                <Menu
+                                    shadow="md"
+                                    width={200}
+                                    opened={opened}
+                                    onChange={() => toggle()}
+                                >
+                                    <Menu.Target>
+                                        <ActionIcon
+                                            variant="outline"
+                                            color="gray"
+                                            onClick={toggle}
+                                        >
+                                            <EllipsisVertical size={16} />
+                                        </ActionIcon>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        <Menu.Label>Action</Menu.Label>
+                                        <Menu.Item
+                                            leftSection={<Pencil size={16} />}
+                                            onClick={() =>
+                                                handleMenuAction("Edit")
+                                            }
+                                        >
+                                            Edit
+                                        </Menu.Item>
+                                        <Menu.Item
+                                            color="red"
+                                            leftSection={<Trash size={16} />}
+                                            onClick={() =>
+                                                handleMenuAction("Delete")
+                                            }
+                                        >
+                                            Delete
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
+                            </div>
+                        </Grid.Col>
+                        <Grid.Col span={12}>
+                            <Grid>
+                                <Grid.Col span={5}>
+                                    <Image
+                                        radius="sm"
+                                        h={150}
+                                        w={150}
+                                        src={`/storage/${product.product_files[0].path}`}
+                                        alt={product.name}
+                                    />
+                                </Grid.Col>
+                                <Grid.Col span={7}>
+                                    <Stack spacing="xs">
+                                        <Text size="sm">
+                                            Kategori : {product.category.name}
+                                        </Text>
+                                        <Text size="sm">
+                                            Stock Awal : {product.initial_stock}
+                                        </Text>
+                                        <Text size="sm">
+                                            Location : {product.location}
+                                        </Text>
+                                    </Stack>
+                                </Grid.Col>
+                            </Grid>
+                        </Grid.Col>
+                    </Grid>
+                )}
             </Paper>
         </Grid.Col>
     );
 }
 
+// Main Content
 function MainContent() {
     const { products } = usePage().props;
-    const [loading, setLoading] = useState(false);
     const [activePage, setActivePage] = useState(1);
     const itemsPerPage = 10;
 
-    useEffect(() => {
-        setLoading(true);
-
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [products]);
+    useEffect(() => {}, [products]);
 
     // Menghitung item untuk pagination
     const startIndex = (activePage - 1) * itemsPerPage;
@@ -193,11 +201,6 @@ function MainContent() {
     return (
         <>
             <Grid pos="relative">
-                <LoadingOverlay
-                    visible={loading}
-                    zIndex={1000}
-                    overlayProps={{ radius: "sm", blur: 2 }}
-                />
                 {paginatedProducts.length === 0 ? (
                     <Grid.Col span={12}>
                         <Paper shadow="xs" p="md">

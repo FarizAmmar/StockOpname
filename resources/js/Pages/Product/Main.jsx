@@ -1,45 +1,50 @@
 import { useEffect, useState } from "react";
+
 import axios from "axios";
-import { FileDown, ListFilter, Plus } from "lucide-react";
+import {
+    EllipsisVertical,
+    FileDown,
+    ListFilter,
+    Pencil,
+    Plus,
+    Trash,
+} from "lucide-react";
+
 import { useForm } from "@mantine/form";
-import { router } from "@inertiajs/react";
 import { useDisclosure } from "@mantine/hooks";
+import { router, usePage } from "@inertiajs/react";
+import CardLoading from "@/Components/CardLoading";
 import { notifications } from "@mantine/notifications";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import {
     ActionIcon,
     Button,
+    Flex,
     Grid,
+    Image,
     LoadingOverlay,
+    Menu,
     Modal,
     NumberInput,
-    SegmentedControl,
+    Pagination,
+    Paper,
     Select,
     Stack,
     Text,
     TextInput,
     Tooltip,
-    Image,
-    Group,
-    Flex,
 } from "@mantine/core";
 
 export default function Product() {
-    // Hooks
     const [newModal, { open: openNew, close: closeNew }] = useDisclosure(false);
-
-    // Segment items
-    const segment_filter = ["All", "Active", "Draft"];
 
     return (
         <Authenticated title="Product">
             {/* Top header */}
             <div className="grid grid-cols-2">
                 {/* Left Section */}
-                <section>
-                    <SegmentedControl data={segment_filter} />
-                </section>
+                <section></section>
                 {/* Right Section */}
                 <section className="flex items-center md:justify-end space-x-2">
                     {/* Filter Button */}
@@ -65,12 +70,190 @@ export default function Product() {
                 </section>
             </div>
 
+            {/* Main content */}
+            <div className="mt-5">
+                <MainContent />
+            </div>
+
             {/* New Product Modal */}
             <NewProduct openNewModal={newModal} closeNewModal={closeNew} />
         </Authenticated>
     );
 }
 
+// Main Content
+function MainContent() {
+    const { products } = usePage().props;
+    const [activePage, setActivePage] = useState(1);
+    const itemsPerPage = 10;
+
+    // Menghitung item untuk pagination
+    const startIndex = (activePage - 1) * itemsPerPage;
+    const paginatedProducts = products.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
+
+    return (
+        <>
+            <Grid pos="relative">
+                {paginatedProducts.length === 0 ? (
+                    <Grid.Col span={12}>
+                        <Paper shadow="xs" p="md">
+                            <Text align="center" size="lg" color="dimmed">
+                                No Record Found
+                            </Text>
+                        </Paper>
+                    </Grid.Col>
+                ) : (
+                    paginatedProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))
+                )}
+            </Grid>
+
+            {/* Pagination Controls */}
+            <Flex
+                mih={50}
+                gap="md"
+                justify="center"
+                align="center"
+                direction="row"
+                wrap="wrap"
+            >
+                <Pagination
+                    page={activePage}
+                    onChange={setActivePage}
+                    total={Math.ceil(products.length / itemsPerPage)}
+                    position="center"
+                    mt="md"
+                />
+            </Flex>
+        </>
+    );
+}
+
+// Product card item
+function ProductCard({ product }) {
+    const [menu, { toggle: toggleMenu }] = useDisclosure(false);
+
+    const [deleteModal, { open: openDel, close: closeDel }] =
+        useDisclosure(false);
+
+    const [loading, setLoading] = useState(true);
+
+    // Handle menu action
+    const handleMenuAction = (action) => {
+        switch (action) {
+            case "Edit":
+                break;
+
+            case "Delete":
+                openDel();
+                break;
+        }
+    };
+
+    useEffect(() => {
+        setLoading(true);
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [product]);
+
+    return (
+        <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
+            <Paper shadow="xs" p="md">
+                {loading ? (
+                    <CardLoading />
+                ) : (
+                    <Grid>
+                        <Grid.Col span={12}>
+                            <div className="flex justify-between">
+                                <Text fz={20} fw={500} mb="xs">
+                                    {product.name}
+                                </Text>
+                                <Menu
+                                    shadow="md"
+                                    width={200}
+                                    opened={menu}
+                                    onChange={() => toggleMenu()}
+                                >
+                                    <Menu.Target>
+                                        <ActionIcon
+                                            variant="outline"
+                                            color="gray"
+                                            onClick={toggleMenu}
+                                        >
+                                            <EllipsisVertical size={16} />
+                                        </ActionIcon>
+                                    </Menu.Target>
+                                    <Menu.Dropdown>
+                                        <Menu.Label>Action</Menu.Label>
+                                        <Menu.Item
+                                            leftSection={<Pencil size={16} />}
+                                            onClick={() =>
+                                                handleMenuAction("Edit")
+                                            }
+                                        >
+                                            Edit
+                                        </Menu.Item>
+                                        <Menu.Item
+                                            color="red"
+                                            leftSection={<Trash size={16} />}
+                                            onClick={() =>
+                                                handleMenuAction("Delete")
+                                            }
+                                        >
+                                            Delete
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
+                            </div>
+                        </Grid.Col>
+                        <Grid.Col span={12}>
+                            <Grid>
+                                <Grid.Col span={5}>
+                                    <Image
+                                        radius="sm"
+                                        h={150}
+                                        w={150}
+                                        src={`/storage/${product.product_files[0].path}`}
+                                        alt={product.name}
+                                    />
+                                </Grid.Col>
+                                <Grid.Col span={7}>
+                                    <Stack spacing="xs">
+                                        <Text size="sm">
+                                            Kategori : {product.category.name}
+                                        </Text>
+                                        <Text size="sm">
+                                            Stock Awal : {product.initial_stock}
+                                        </Text>
+                                        <Text size="sm">
+                                            Location : {product.location}
+                                        </Text>
+                                    </Stack>
+                                </Grid.Col>
+                            </Grid>
+                        </Grid.Col>
+                    </Grid>
+                )}
+            </Paper>
+
+            {/* Modal Delete */}
+            <DeleteProduct
+                openDelModal={deleteModal}
+                closeDelModal={closeDel}
+                product_id={product.id}
+            />
+        </Grid.Col>
+    );
+}
+
+// New Product Modal
 function NewProduct({ openNewModal, closeNewModal }) {
     // State for loading form hooks
     const [loading, { open: openLoading, close: closeLoading }] =
@@ -82,6 +265,7 @@ function NewProduct({ openNewModal, closeNewModal }) {
 
     // State for categories
     const [categories, setCategories] = useState([]);
+
     // State for file previews
     const [previews, setPreviews] = useState([]);
 
@@ -109,7 +293,6 @@ function NewProduct({ openNewModal, closeNewModal }) {
             code: "",
             name: "",
             category: "",
-            price: 0,
             initial_stock: 0,
             location: "",
             files: [],
@@ -182,6 +365,10 @@ function NewProduct({ openNewModal, closeNewModal }) {
             opened={openNewModal}
             onClose={closeNewModal}
             centered
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
         >
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack mb="sm">
@@ -273,28 +460,14 @@ function NewProduct({ openNewModal, closeNewModal }) {
                                 {...form.getInputProps("category")}
                             />
                         </Grid.Col>
-                        {/* Price */}
-                        <Grid.Col span={12}>
-                            <NumberInput
-                                label="Price"
-                                name="price"
-                                allowNegative={false}
-                                thousandSeparator=","
-                                defaultValue={1_000_000}
-                                prefix="Rp. "
-                                withAsterisk
-                                hideControls
-                                {...form.getInputProps("price")}
-                            />
-                        </Grid.Col>
                         {/* Initial stock */}
                         <Grid.Col span={12}>
                             <NumberInput
                                 label="Start stock"
                                 name="initial_stock"
                                 min={0}
-                                max={999}
-                                maxLength={3}
+                                max={99999}
+                                maxLength={5}
                                 allowNegative={false}
                                 withAsterisk
                                 {...form.getInputProps("initial_stock")}
@@ -322,6 +495,59 @@ function NewProduct({ openNewModal, closeNewModal }) {
                     </Button>
                 </Stack>
             </form>
+        </Modal>
+    );
+}
+
+// Delete Product Modal
+function DeleteProduct({ openDelModal, closeDelModal, product_id }) {
+    const [loading, setLoading] = useState(false);
+
+    const handleDelete = () => {
+        router.delete(route("product.destroy", product_id), {
+            onStart: () => {
+                setLoading(true);
+            },
+            onSuccess: (response) => {
+                notifications.show({
+                    color: "green",
+                    title: response.props.flash.success,
+                    message: response.props.flash.message,
+                    position: "top-center",
+                });
+            },
+            onFinish: () => {
+                setLoading(false);
+                closeDelModal();
+            },
+            onError: (error) => {
+                notifications.show({
+                    color: "red",
+                    title: "Error",
+                    message: `Failed to delete product ${error}`,
+                    position: "top-center",
+                });
+            },
+        });
+    };
+
+    return (
+        <Modal
+            opened={openDelModal}
+            onClose={closeDelModal}
+            title="Delete Confirmation"
+            centered
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
+        >
+            <Text fz={14}>Are you sure you want to delete this product?</Text>
+            <Flex justify="end">
+                <Button color="red" onClick={handleDelete} loading={loading}>
+                    Confirm
+                </Button>
+            </Flex>
         </Modal>
     );
 }

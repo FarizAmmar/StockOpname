@@ -7,7 +7,6 @@ use App\Http\Requests\Product\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductFile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -18,7 +17,9 @@ class ProductController extends Controller
     public function index()
     {
         // Product index view
-        return Inertia::render('Product/Main');
+        return Inertia::render('Product/Main', [
+            'products' => Product::latest()->with(['category', 'product_files'])->get(),
+        ]);
     }
 
     /**
@@ -42,7 +43,6 @@ class ProductController extends Controller
             $product->category_id = $validatedData['category'];
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
-            $product->price = $validatedData['price'];
             $product->location = $validatedData['location'];
             $product->initial_stock = $validatedData['initial_stock'];
             $product->save();
@@ -70,7 +70,7 @@ class ProductController extends Controller
 
             return back()->with([
                 'success' => 'Created!',
-                'message' => 'Product created successfully'
+                'message' => 'Product successfully created!'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors());
@@ -108,6 +108,14 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $product = Product::find($id);
+
+            $product->delete();
+
+            return back()->with(['success' => 'Deleted!', 'message' => 'Product successfully deleted!']);
+        } catch (\Throwable $th) {
+            return back()->withErrors($th->getMessage());
+        }
     }
 }

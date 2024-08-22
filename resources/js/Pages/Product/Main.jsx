@@ -1,43 +1,40 @@
 import { useEffect, useState } from "react";
+
 import axios from "axios";
 import {
     EllipsisVertical,
     FileDown,
-    Group,
     ListFilter,
     Pencil,
-    PencilLine,
     Plus,
     Trash,
 } from "lucide-react";
+
 import { useForm } from "@mantine/form";
-import { router, usePage } from "@inertiajs/react";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications, showNotification } from "@mantine/notifications";
+import { router, usePage } from "@inertiajs/react";
+import CardLoading from "@/Components/CardLoading";
+import { notifications } from "@mantine/notifications";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import {
     ActionIcon,
     Button,
+    Flex,
     Grid,
+    Image,
     LoadingOverlay,
+    Menu,
     Modal,
     NumberInput,
+    Pagination,
+    Paper,
     Select,
     Stack,
     Text,
     TextInput,
     Tooltip,
-    Image,
-    Flex,
-    Paper,
-    Card,
-    Badge,
-    Menu,
-    Pagination,
-    Skeleton,
 } from "@mantine/core";
-import CardLoading from "@/Components/CardLoading";
 
 export default function Product() {
     const [newModal, { open: openNew, close: closeNew }] = useDisclosure(false);
@@ -84,12 +81,78 @@ export default function Product() {
     );
 }
 
+// Main Content
+function MainContent() {
+    const { products } = usePage().props;
+    const [activePage, setActivePage] = useState(1);
+    const itemsPerPage = 10;
+
+    // Menghitung item untuk pagination
+    const startIndex = (activePage - 1) * itemsPerPage;
+    const paginatedProducts = products.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
+
+    return (
+        <>
+            <Grid pos="relative">
+                {paginatedProducts.length === 0 ? (
+                    <Grid.Col span={12}>
+                        <Paper shadow="xs" p="md">
+                            <Text align="center" size="lg" color="dimmed">
+                                No Record Found
+                            </Text>
+                        </Paper>
+                    </Grid.Col>
+                ) : (
+                    paginatedProducts.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                    ))
+                )}
+            </Grid>
+
+            {/* Pagination Controls */}
+            <Flex
+                mih={50}
+                gap="md"
+                justify="center"
+                align="center"
+                direction="row"
+                wrap="wrap"
+            >
+                <Pagination
+                    page={activePage}
+                    onChange={setActivePage}
+                    total={Math.ceil(products.length / itemsPerPage)}
+                    position="center"
+                    mt="md"
+                />
+            </Flex>
+        </>
+    );
+}
+
 // Product card item
 function ProductCard({ product }) {
-    const [opened, { toggle }] = useDisclosure(false);
+    const [menu, { toggle: toggleMenu }] = useDisclosure(false);
+
+    const [deleteModal, { open: openDel, close: closeDel }] =
+        useDisclosure(false);
+
     const [loading, setLoading] = useState(true);
 
-    const handleMenuAction = (action) => {};
+    // Handle menu action
+    const handleMenuAction = (action) => {
+        switch (action) {
+            case "Edit":
+                break;
+
+            case "Delete":
+                openDel();
+                break;
+        }
+    };
 
     useEffect(() => {
         setLoading(true);
@@ -115,14 +178,14 @@ function ProductCard({ product }) {
                                 <Menu
                                     shadow="md"
                                     width={200}
-                                    opened={opened}
-                                    onChange={() => toggle()}
+                                    opened={menu}
+                                    onChange={() => toggleMenu()}
                                 >
                                     <Menu.Target>
                                         <ActionIcon
                                             variant="outline"
                                             color="gray"
-                                            onClick={toggle}
+                                            onClick={toggleMenu}
                                         >
                                             <EllipsisVertical size={16} />
                                         </ActionIcon>
@@ -179,61 +242,14 @@ function ProductCard({ product }) {
                     </Grid>
                 )}
             </Paper>
+
+            {/* Modal Delete */}
+            <DeleteProduct
+                openDelModal={deleteModal}
+                closeDelModal={closeDel}
+                product_id={product.id}
+            />
         </Grid.Col>
-    );
-}
-
-// Main Content
-function MainContent() {
-    const { products } = usePage().props;
-    const [activePage, setActivePage] = useState(1);
-    const itemsPerPage = 10;
-
-    useEffect(() => {}, [products]);
-
-    // Menghitung item untuk pagination
-    const startIndex = (activePage - 1) * itemsPerPage;
-    const paginatedProducts = products.slice(
-        startIndex,
-        startIndex + itemsPerPage
-    );
-
-    return (
-        <>
-            <Grid pos="relative">
-                {paginatedProducts.length === 0 ? (
-                    <Grid.Col span={12}>
-                        <Paper shadow="xs" p="md">
-                            <Text align="center" size="lg" color="dimmed">
-                                No Record Found
-                            </Text>
-                        </Paper>
-                    </Grid.Col>
-                ) : (
-                    paginatedProducts.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))
-                )}
-            </Grid>
-
-            {/* Pagination Controls */}
-            <Flex
-                mih={50}
-                gap="md"
-                justify="center"
-                align="center"
-                direction="row"
-                wrap="wrap"
-            >
-                <Pagination
-                    page={activePage}
-                    onChange={setActivePage}
-                    total={Math.ceil(products.length / itemsPerPage)}
-                    position="center"
-                    mt="md"
-                />
-            </Flex>
-        </>
     );
 }
 
@@ -249,6 +265,7 @@ function NewProduct({ openNewModal, closeNewModal }) {
 
     // State for categories
     const [categories, setCategories] = useState([]);
+
     // State for file previews
     const [previews, setPreviews] = useState([]);
 
@@ -348,6 +365,10 @@ function NewProduct({ openNewModal, closeNewModal }) {
             opened={openNewModal}
             onClose={closeNewModal}
             centered
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
         >
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack mb="sm">
@@ -474,6 +495,59 @@ function NewProduct({ openNewModal, closeNewModal }) {
                     </Button>
                 </Stack>
             </form>
+        </Modal>
+    );
+}
+
+// Delete Product Modal
+function DeleteProduct({ openDelModal, closeDelModal, product_id }) {
+    const [loading, setLoading] = useState(false);
+
+    const handleDelete = () => {
+        router.delete(route("product.destroy", product_id), {
+            onStart: () => {
+                setLoading(true);
+            },
+            onSuccess: (response) => {
+                notifications.show({
+                    color: "green",
+                    title: response.props.flash.success,
+                    message: response.props.flash.message,
+                    position: "top-center",
+                });
+            },
+            onFinish: () => {
+                setLoading(false);
+                closeDelModal();
+            },
+            onError: (error) => {
+                notifications.show({
+                    color: "red",
+                    title: "Error",
+                    message: `Failed to delete product ${error}`,
+                    position: "top-center",
+                });
+            },
+        });
+    };
+
+    return (
+        <Modal
+            opened={openDelModal}
+            onClose={closeDelModal}
+            title="Delete Confirmation"
+            centered
+            overlayProps={{
+                backgroundOpacity: 0.55,
+                blur: 3,
+            }}
+        >
+            <Text fz={14}>Are you sure you want to delete this product?</Text>
+            <Flex justify="end">
+                <Button color="red" onClick={handleDelete} loading={loading}>
+                    Confirm
+                </Button>
+            </Flex>
         </Modal>
     );
 }

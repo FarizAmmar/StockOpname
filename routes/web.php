@@ -18,6 +18,9 @@ Route::prefix('/product')->middleware('auth')->name('product.')->group(function 
 
     // Store
     Route::post('/store', [ProductController::class, 'store'])->name('store');
+
+    // Destroy
+    Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('destroy');
 });
 
 require __DIR__ . '/auth.php';

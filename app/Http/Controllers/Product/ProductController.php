@@ -70,7 +70,7 @@ class ProductController extends Controller
 
             return back()->with([
                 'success' => 'Created!',
-                'message' => 'Product created successfully'
+                'message' => 'Product successfully created!'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors());
@@ -108,6 +108,14 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $product = Product::find($id);
+
+            $product->delete();
+
+            return back()->with(['success' => 'Deleted!', 'message' => 'Product successfully deleted!']);
+        } catch (\Throwable $th) {
+            return back()->withErrors($th->getMessage());
+        }
     }
 }

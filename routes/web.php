@@ -19,6 +19,12 @@ Route::prefix('/product')->middleware('auth')->name('product.')->group(function 
     // Store
     Route::post('/store', [ProductController::class, 'store'])->name('store');
 
+    // Store
+    Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
+
+    // Update
+    Route::post('/update/{id}', [ProductController::class, 'update'])->name('update');
+
     // Destroy
     Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('destroy');
 });

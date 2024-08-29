@@ -1,6 +1,6 @@
 import { Grid, Skeleton, Stack } from "@mantine/core";
 
-export default function CardLoading() {
+const CardLoading = () => {
     return (
         <Grid>
             <Grid.Col span={12}>
@@ -25,4 +25,6 @@ export default function CardLoading() {
             </Grid.Col>
         </Grid>
     );
-}
+};
+
+export default CardLoading;

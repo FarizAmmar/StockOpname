@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 
-export default function Guest({ title, className, children }) {
+const Guest = ({ title, className, children }) => {
     return (
         <>
             {/* Title */}
@@ -10,4 +10,6 @@ export default function Guest({ title, className, children }) {
             <main className={className}>{children}</main>
         </>
     );
-}
+};
+
+export default Guest;

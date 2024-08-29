@@ -7,10 +7,22 @@ use App\Http\Requests\Product\ProductRequest;
 use App\Models\Product;
 use App\Models\ProductFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProductController extends Controller
 {
+    protected $req;
+    protected $product_model;
+    protected $productFile_model;
+
+    public function __construct(Request $request, Product $product, ProductFile $productFile)
+    {
+        $this->req = $request;
+        $this->product_model = $product;
+        $this->productFile_model = $productFile;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -18,12 +30,15 @@ class ProductController extends Controller
     {
         // Product index view
         return Inertia::render('Product/Main', [
-            'products' => Product::latest()->with(['category', 'product_files'])->get(),
+            'products' => $this->product_model
+                ->latest()
+                ->with(['category', 'product_files'])
+                ->get(),
         ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new resource.   
      */
     public function create()
     {
@@ -36,6 +51,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         try {
+            // Validation
             $validatedData = $request->validated();
 
             // Create product
@@ -70,7 +86,7 @@ class ProductController extends Controller
 
             return back()->with([
                 'success' => 'Created!',
-                'message' => 'Product successfully created!'
+                'message' => 'Product created successfully.'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors());
@@ -92,16 +108,79 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $product = $this->product_model
+                ->with(['category', 'product_files'])
+                ->where('id', $id)
+                ->first();
+
+            return response()->json(['product' => $product]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()]);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProductRequest $request, string $id)
     {
-        //
+        try {
+            // Validasi data
+            $validatedData = $request->validated();
+
+            // Cari produk yang akan diupdate
+            $product = Product::findOrFail($id);
+
+            // Update atribut produk
+            $product->category_id = $validatedData['category'];
+            $product->code = $validatedData['code'];
+            $product->name = $validatedData['name'];
+            $product->location = $validatedData['location'];
+            $product->initial_stock = $validatedData['initial_stock'];
+            $product->save();
+
+            // Proses file jika ada
+            $files = $request->file('files');
+
+            if ($files) {
+                // Hapus file lama jika diperlukan
+                foreach ($product->product_files as $oldFile) {
+                    Storage::disk('public')->delete($oldFile->path);
+                    $oldFile->delete();
+                }
+
+                // Unggah dan simpan file baru
+                foreach ($files as $file) {
+                    $originalName = $file->getClientOriginalName();
+                    $path = $file->store('products', 'public');
+                    $fileSize = $file->getSize();
+                    $extension = $file->getClientOriginalExtension();
+
+                    // Buat catatan file produk baru
+                    $productFile = new ProductFile();
+                    $productFile->product_id = $product->id;
+                    $productFile->file_name = basename($path);
+                    $productFile->original_name = $originalName;
+                    $productFile->file_size = $fileSize;
+                    $productFile->ext = $extension;
+                    $productFile->path = $path;
+                    $productFile->save();
+                }
+            }
+
+            // Redirect atau response yang sesuai
+            return redirect()->route('product.index')->with([
+                'success' => 'Updated!',
+                'message' => 'Product updated successfully.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (\Throwable $th) {
+            return back()->withErrors(['error' => $th->getMessage()]);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -109,11 +188,27 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         try {
-            $product = Product::find($id);
+            // Temukan produk berdasarkan ID
+            $product = $this->product_model->find($id);
 
+            // Temukan file produk berdasarkan ID produk
+            $file = $this->productFile_model->where('product_id', $product->id)->first();
+
+            // Hapus file dari storage jika file ada
+            if ($file && Storage::exists('public/' . $file->path)) {
+                Storage::delete('public/' . $file->path);
+            }
+
+            // Hapus produk dari database
             $product->delete();
 
-            return back()->with(['success' => 'Deleted!', 'message' => 'Product successfully deleted!']);
+            // Redirect kembali dengan pesan sukses
+            return back()->with([
+                'success' => 'Deleted!',
+                'message' => 'Product deleted successfully.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
         } catch (\Throwable $th) {
             return back()->withErrors($th->getMessage());
         }

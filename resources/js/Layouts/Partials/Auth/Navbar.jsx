@@ -17,12 +17,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { Gauge, Package } from "lucide-react";
 
-export default function Navbar({
-    sidebarOpened,
-    toggleSidebar,
-    className,
-    title,
-}) {
+const Navbar = ({ sidebarOpened, toggleSidebar, className, title }) => {
     // Mantine Hook
     const [mobileSidebar, { open: openMobile, close: closeMobile }] =
         useDisclosure(false);
@@ -65,9 +60,7 @@ export default function Navbar({
                 {/* Menu Dropdown */}
                 <Menu shadow="md" width={200}>
                     <Menu.Target>
-                        <div className="cursor-pointer">
-                            <Avatar></Avatar>
-                        </div>
+                        <Avatar style={{ cursor: "pointer" }} />
                     </Menu.Target>
 
                     <Menu.Dropdown>
@@ -120,4 +113,6 @@ export default function Navbar({
             </Drawer>
         </nav>
     );
-}
+};
+
+export default Navbar;

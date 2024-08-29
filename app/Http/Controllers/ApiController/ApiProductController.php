@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class ApiProductController extends Controller
 {
+    protected $product_model;
+
+    public function __construct(Product $product)
+    {
+        $this->product_model = $product;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -27,9 +33,18 @@ class ApiProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(string $id)
     {
-        //
+        try {
+            $product = $this->product_model
+                ->with(['category', 'product_files'])
+                ->where('id', $id)
+                ->first();
+
+            return response()->json(['product' => $product]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()]);
+        }
     }
 
     /**

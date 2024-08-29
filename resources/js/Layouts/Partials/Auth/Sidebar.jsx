@@ -1,4 +1,4 @@
-import { Gauge, Package } from "lucide-react";
+import { ArrowLeftRight, Gauge, Package } from "lucide-react";
 
 import { Link } from "@inertiajs/react";
 import { Avatar, Divider, Stack, Text, Title, Tooltip } from "@mantine/core";
@@ -8,6 +8,11 @@ const Sidebar = ({ className, title }) => {
         item: [
             { link: route("dashboard"), label: "Dashboard", icon: Gauge },
             { link: route("product.index"), label: "Product", icon: Package },
+            {
+                link: route("transaction.index"),
+                label: "Transaction",
+                icon: ArrowLeftRight,
+            },
         ],
     };
 

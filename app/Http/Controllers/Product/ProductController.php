@@ -126,50 +126,60 @@ class ProductController extends Controller
     public function update(ProductRequest $request, string $id)
     {
         try {
-            // Validasi data
+            // Validate the request data
             $validatedData = $request->validated();
 
-            // Cari produk yang akan diupdate
+            // Find the product by its ID
             $product = Product::findOrFail($id);
 
-            // Update atribut produk
+            // Update the product attributes
             $product->category_id = $validatedData['category'];
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
             $product->location = $validatedData['location'];
             $product->initial_stock = $validatedData['initial_stock'];
-            $product->save();
 
-            // Proses file jika ada
+            // Process the files if they exist
             $files = $request->file('files');
 
             if ($files) {
-                // Hapus file lama jika diperlukan
-                foreach ($product->product_files as $oldFile) {
-                    Storage::disk('public')->delete($oldFile->path);
-                    $oldFile->delete();
-                }
-
-                // Unggah dan simpan file baru
                 foreach ($files as $file) {
                     $originalName = $file->getClientOriginalName();
                     $path = $file->store('products', 'public');
                     $fileSize = $file->getSize();
                     $extension = $file->getClientOriginalExtension();
 
-                    // Buat catatan file produk baru
-                    $productFile = new ProductFile();
-                    $productFile->product_id = $product->id;
-                    $productFile->file_name = basename($path);
-                    $productFile->original_name = $originalName;
-                    $productFile->file_size = $fileSize;
-                    $productFile->ext = $extension;
-                    $productFile->path = $path;
-                    $productFile->save();
+                    // Check if a file already exists
+                    $existingFile = $product->product_files()->first();
+
+                    if ($existingFile && ($existingFile->original_name != $originalName || $existingFile->file_size !== $fileSize || $existingFile->ext !== $extension)) {
+                        // Delete the old file
+                        Storage::disk('public')->delete($existingFile->path);
+
+                        // Update the existing file record
+                        $existingFile->file_name = basename($path);
+                        $existingFile->original_name = $originalName;
+                        $existingFile->file_size = $fileSize;
+                        $existingFile->ext = $extension;
+                        $existingFile->path = $path;
+                        $existingFile->save();
+                    } else {
+                        // Create a new product file record if none exists with the same name
+                        $productFile = new ProductFile();
+                        $productFile->product_id = $product->id;
+                        $productFile->file_name = basename($path);
+                        $productFile->original_name = $originalName;
+                        $productFile->file_size = $fileSize;
+                        $productFile->ext = $extension;
+                        $productFile->path = $path;
+                        $productFile->save();
+                    }
                 }
             }
 
-            // Redirect atau response yang sesuai
+            // Save changes to the product
+            $product->save();
+
             return redirect()->route('product.index')->with([
                 'success' => 'Updated!',
                 'message' => 'Product updated successfully.'
@@ -180,7 +190,6 @@ class ProductController extends Controller
             return back()->withErrors(['error' => $th->getMessage()]);
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

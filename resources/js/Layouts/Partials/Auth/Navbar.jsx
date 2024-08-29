@@ -15,7 +15,7 @@ import {
     rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Gauge, Package } from "lucide-react";
+import { ArrowLeftRight, Gauge, Package } from "lucide-react";
 
 const Navbar = ({ sidebarOpened, toggleSidebar, className, title }) => {
     // Mantine Hook
@@ -30,6 +30,11 @@ const Navbar = ({ sidebarOpened, toggleSidebar, className, title }) => {
                 link: route("product.index"),
                 label: "Product",
                 icon: Package,
+            },
+            {
+                link: route("transaction.index"),
+                label: "Transaction",
+                icon: ArrowLeftRight,
             },
         ],
     };

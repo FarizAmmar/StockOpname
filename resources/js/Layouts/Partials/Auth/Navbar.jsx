@@ -15,14 +15,9 @@ import {
     rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Gauge, Package } from "lucide-react";
+import { ArrowLeftRight, Gauge, Package } from "lucide-react";
 
-export default function Navbar({
-    sidebarOpened,
-    toggleSidebar,
-    className,
-    title,
-}) {
+const Navbar = ({ sidebarOpened, toggleSidebar, className, title }) => {
     // Mantine Hook
     const [mobileSidebar, { open: openMobile, close: closeMobile }] =
         useDisclosure(false);
@@ -35,6 +30,11 @@ export default function Navbar({
                 link: route("product.index"),
                 label: "Product",
                 icon: Package,
+            },
+            {
+                link: route("transaction.index"),
+                label: "Transaction",
+                icon: ArrowLeftRight,
             },
         ],
     };
@@ -65,9 +65,7 @@ export default function Navbar({
                 {/* Menu Dropdown */}
                 <Menu shadow="md" width={200}>
                     <Menu.Target>
-                        <div className="cursor-pointer">
-                            <Avatar></Avatar>
-                        </div>
+                        <Avatar style={{ cursor: "pointer" }} />
                     </Menu.Target>
 
                     <Menu.Dropdown>
@@ -120,4 +118,6 @@ export default function Navbar({
             </Drawer>
         </nav>
     );
-}
+};
+
+export default Navbar;

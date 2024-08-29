@@ -5,7 +5,7 @@ import { useDisclosure, useWindowScroll } from "@mantine/hooks";
 import { Affix, Button, rem, Transition } from "@mantine/core";
 import { IconArrowUp } from "@tabler/icons-react";
 
-export default function Authenticated({ title, className, children }) {
+const Authenticated = ({ title, className, children }) => {
     // Mantine Hooks
     const [sidebarOpened, { toggle: toggleSidebar }] = useDisclosure(true);
     const [scroll, scrollTo] = useWindowScroll();
@@ -59,4 +59,6 @@ export default function Authenticated({ title, className, children }) {
             </Affix>
         </>
     );
-}
+};
+
+export default Authenticated;

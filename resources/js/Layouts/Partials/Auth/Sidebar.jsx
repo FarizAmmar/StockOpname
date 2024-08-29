@@ -1,13 +1,18 @@
-import { Gauge, Package } from "lucide-react";
+import { ArrowLeftRight, Gauge, Package } from "lucide-react";
 
 import { Link } from "@inertiajs/react";
 import { Avatar, Divider, Stack, Text, Title, Tooltip } from "@mantine/core";
 
-export default function Sidebar({ className, title }) {
+const Sidebar = ({ className, title }) => {
     const tabs = {
         item: [
             { link: route("dashboard"), label: "Dashboard", icon: Gauge },
             { link: route("product.index"), label: "Product", icon: Package },
+            {
+                link: route("transaction.index"),
+                label: "Transaction",
+                icon: ArrowLeftRight,
+            },
         ],
     };
 
@@ -37,7 +42,7 @@ export default function Sidebar({ className, title }) {
             </div>
         </nav>
     );
-}
+};
 
 // Navbar link component
 function NavbarLink({ icon: Icon, label, link, title }) {
@@ -62,3 +67,5 @@ function NavbarLink({ icon: Icon, label, link, title }) {
         </Tooltip>
     );
 }
+
+export default Sidebar;

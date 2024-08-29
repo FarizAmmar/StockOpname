@@ -18,13 +18,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { KeyRound, Mail } from "lucide-react";
 
-export default function Login() {
+const Login = () => {
     // Mantine Hooks
     const [loading, { open: loadingOpen, close: loadingClose }] =
         useDisclosure(false);
 
     const form = useForm({
-        mode: "uncontrolled",
         initialValues: {
             email: "",
             password: "",
@@ -123,4 +122,6 @@ export default function Login() {
             </Paper>
         </Guest>
     );
-}
+};
+
+export default Login;

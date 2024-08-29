@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('location');
             $table->integer('initial_stock');
+            $table->integer('final_stock')->default(0);
             $table->timestamps();
         });
     }

@@ -15,7 +15,8 @@ class Product extends Model
         'name',
         'price',
         'location',
-        'initial_stock'
+        'initial_stock',
+        'final_stock',
     ];
 
     public function category(): BelongsTo
@@ -26,5 +27,15 @@ class Product extends Model
     public function product_files(): HasMany
     {
         return $this->hasMany(ProductFile::class);
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function daily_totals(): HasMany
+    {
+        return $this->hasMany(DailyTotal::class);
     }
 }

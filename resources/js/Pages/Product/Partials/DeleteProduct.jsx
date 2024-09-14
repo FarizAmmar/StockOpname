@@ -38,7 +38,7 @@ const DeleteProduct = ({ openDelModal, closeDelModal, product_id }) => {
 
     return (
         <Modal
-            title="Delete Confirmation"
+            title="Konfirmasi"
             opened={openDelModal}
             onClose={closeDelModal}
             centered

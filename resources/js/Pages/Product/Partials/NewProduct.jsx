@@ -38,22 +38,26 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
     const [previews, setPreviews] = useState([]);
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get(route("category.index"));
-                setCategories(
-                    response.data.category.map((item) => ({
-                        value: item.id.toString(),
-                        label: item.name,
-                    }))
-                );
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            }
-        };
+        if (openNewModal) {
+            const fetchCategories = async () => {
+                try {
+                    const response = await axios.get(
+                        route("api.category.get_data")
+                    );
+                    setCategories(
+                        response.data.category.map((item) => ({
+                            value: item.id.toString(),
+                            label: item.name,
+                        }))
+                    );
+                } catch (error) {
+                    console.error("Error fetching categories:", error);
+                }
+            };
 
-        fetchCategories();
-    }, []);
+            fetchCategories();
+        }
+    }, [openNewModal]);
 
     // Product form hook
     const form = useForm({
@@ -126,7 +130,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
             const filePreviews = files.map((file) => URL.createObjectURL(file));
             setPreviews(filePreviews);
             closeLoadingDrop();
-        }, 2000);
+        }, 500);
     };
 
     // Handle clear files
@@ -136,15 +140,14 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
             form.setFieldValue("files", []);
             setPreviews([]);
             closeLoadingDrop();
-        }, 2000);
+        }, 500);
     };
 
     return (
         <Modal
-            title="Create new product"
+            title="Tambah Produk"
             opened={openNewModal}
             onClose={closeNewModal}
-            centered
             overlayProps={{
                 backgroundOpacity: 0.55,
                 blur: 3,
@@ -215,7 +218,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                         {/* Product Code */}
                         <Grid.Col span={6}>
                             <TextInput
-                                label="Product Code"
+                                label="Kode Produk"
                                 name="code"
                                 placeholder="Enter product code"
                                 maxLength={20}
@@ -229,10 +232,11 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                                 }}
                             />
                         </Grid.Col>
+
                         {/* Product Name */}
                         <Grid.Col span={6}>
                             <TextInput
-                                label="Product Name"
+                                label="Nama Produk"
                                 name="name"
                                 maxLength={50}
                                 withAsterisk
@@ -251,10 +255,11 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                                 }}
                             />
                         </Grid.Col>
+
                         {/* Category */}
                         <Grid.Col span={12}>
                             <Select
-                                label="Category"
+                                label="Kategori"
                                 placeholder="Choose option"
                                 data={categories}
                                 withAsterisk
@@ -262,10 +267,11 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                                 {...form.getInputProps("category")}
                             />
                         </Grid.Col>
+
                         {/* Initial stock */}
                         <Grid.Col span={12}>
                             <NumberInput
-                                label="Start stock"
+                                label="Stok Awal"
                                 name="initial_stock"
                                 min={0}
                                 max={99999}
@@ -275,10 +281,11 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                                 {...form.getInputProps("initial_stock")}
                             />
                         </Grid.Col>
+
                         {/* Location */}
                         <Grid.Col span={12}>
                             <TextInput
-                                label="Location"
+                                label="Lokasi"
                                 name="location"
                                 placeholder="Enter product location"
                                 withAsterisk
@@ -286,6 +293,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                             />
                         </Grid.Col>
                     </Grid>
+
                     {/* Button Submit */}
                     <Button
                         color="rgba(50, 50, 50, 1)"
@@ -293,7 +301,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                         fullWidth
                         mt="md"
                     >
-                        Create Product
+                        Buat Produk
                     </Button>
                 </Stack>
             </form>

@@ -2,10 +2,8 @@
 
 use App\Http\Controllers\ApiController\ApiCategoryController;
 use App\Http\Controllers\ApiController\ApiProductController;
+use App\Http\Controllers\ApiController\ApiTransactionController;
 use Illuminate\Support\Facades\Route;
-
-// Api Resource
-Route::apiResource('category', ApiCategoryController::class);
 
 
 Route::prefix('/api')->middleware('api')->name('api.')->group(function () {
@@ -15,5 +13,17 @@ Route::prefix('/api')->middleware('api')->name('api.')->group(function () {
         Route::get('/', [ApiProductController::class, 'index'])->name('get_data');
         // Get detail record
         Route::get('/{id}/detail', [ApiProductController::class, 'show'])->name('get_detail');
+    });
+
+    // API Category
+    Route::prefix('/category')->name('category.')->group(function () {
+        // Get all record
+        Route::get('/', [ApiCategoryController::class, 'index'])->name('get_data');
+    });
+
+    // API Transaction
+    Route::prefix('/transaction')->name('transaction.')->group(function () {
+        // Get all record
+        Route::get('/', [ApiTransactionController::class, 'index'])->name('get_data');
     });
 });

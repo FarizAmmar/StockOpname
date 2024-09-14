@@ -19,7 +19,15 @@ class ApiProductController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $product = $this->product_model
+                ->with(['category', 'product_files'])
+                ->get();
+
+            return response()->json(['product' => $product]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()]);
+        }
     }
 
     /**

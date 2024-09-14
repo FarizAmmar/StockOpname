@@ -12,7 +12,7 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
+        $response = $this->get(route('login.index'));
 
         $response->assertStatus(200);
     }
@@ -25,13 +25,18 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response = $this->post('/login', [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertValid();
+
+        $this->assertAuthenticatedAs($user);
+
+        dd($response->getContent());
+
+        $response->assertRedirect(route('dashboard'));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

@@ -3,11 +3,22 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Transaction\TransactionRequest;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
+    protected $req;
+    protected $transaction_model;
+
+    public function __construct(Request $request, Transaction $transaction)
+    {
+        $this->req = $request;
+        $this->transaction_model = $transaction;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -28,9 +39,28 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TransactionRequest $request)
     {
-        //
+        try {
+            $validated_data = $request->validated();
+
+            $transaction = new Transaction();
+            $transaction->product_id = $validated_data['product'];
+            $transaction->transaction_date = $validated_data['transaction_date'];
+            $transaction->type = $validated_data['transaction_type'] == 'Masuk' ? 'in' : 'out';
+            $transaction->quantity = $validated_data['quantity'];
+            $transaction->notes = $validated_data['notes'];
+            $transaction->save();
+
+            return back()->with([
+                'success' => 'Created!',
+                'message' => 'Transaction created successfully.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (\Throwable $th) {
+            return back()->withErrors($th->getMessage());
+        }
     }
 
     /**

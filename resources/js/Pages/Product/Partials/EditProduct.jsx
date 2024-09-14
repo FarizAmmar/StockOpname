@@ -49,7 +49,9 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
         if (openEditModal) {
             const fetchCategories = async () => {
                 try {
-                    const response = await axios.get(route("category.index"));
+                    const response = await axios.get(
+                        route("api.category.get_data")
+                    );
                     setCategories(
                         response.data.category.map((item) => ({
                             value: item.id.toString(),
@@ -159,7 +161,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
             const filePreviews = files.map((file) => URL.createObjectURL(file));
             setPreviews(filePreviews);
             closeLoadingDrop();
-        }, 2000);
+        }, 500);
     };
 
     const clearFiles = () => {
@@ -168,15 +170,14 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
             form.setFieldValue("files", []);
             setPreviews([]);
             closeLoadingDrop();
-        }, 2000);
+        }, 500);
     };
 
     return (
         <Modal
-            title="Edit product"
+            title="Ubah Produk"
             opened={openEditModal}
             onClose={closeEditModal}
-            centered
             overlayProps={{ backgroundOpacity: 0.55, blur: 3 }}
         >
             <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -209,6 +210,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                                                     width: 300,
                                                     height: 300,
                                                 }}
+                                                fit="cover"
                                                 radius="sm"
                                             />
                                         ))}
@@ -242,7 +244,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                     <Grid>
                         <Grid.Col span={6}>
                             <TextInput
-                                label="Product Code"
+                                label="Kode Produk"
                                 name="code"
                                 placeholder="Enter product code"
                                 maxLength={20}
@@ -259,7 +261,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <TextInput
-                                label="Product Name"
+                                label="Nama Produk"
                                 name="name"
                                 maxLength={50}
                                 withAsterisk
@@ -280,7 +282,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         </Grid.Col>
                         <Grid.Col span={12}>
                             <Select
-                                label="Category"
+                                label="Kategori"
                                 placeholder="Choose option"
                                 data={categories}
                                 withAsterisk
@@ -290,7 +292,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         </Grid.Col>
                         <Grid.Col span={12}>
                             <NumberInput
-                                label="Start stock"
+                                label="Stok Awal"
                                 name="initial_stock"
                                 min={0}
                                 max={99999}
@@ -302,7 +304,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         </Grid.Col>
                         <Grid.Col span={12}>
                             <TextInput
-                                label="Location"
+                                label="Lokasi"
                                 name="location"
                                 placeholder="Enter product location"
                                 withAsterisk
@@ -316,7 +318,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         fullWidth
                         mt="md"
                     >
-                        Update Product
+                        Simpan Perubahan
                     </Button>
                 </Stack>
             </form>

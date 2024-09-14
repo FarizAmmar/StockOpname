@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('transaction_date');
             $table->enum('type', ['in', 'out']);
             $table->integer('quantity');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

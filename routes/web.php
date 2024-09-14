@@ -34,6 +34,9 @@ Route::prefix('/product')->middleware('auth')->name('product.')->group(function 
 Route::prefix('/transaction')->middleware('auth')->name('transaction.')->group(function () {
     // Index
     Route::get('/', [TransactionController::class, 'index'])->name('index');
+
+    // Store
+    Route::post('/store', [TransactionController::class, 'store'])->name('store');
 });
 
 require __DIR__ . '/auth.php';

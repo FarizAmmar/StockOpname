@@ -124,10 +124,10 @@ const ProductCard = ({ product }) => {
                                             Kategori : {product.category.name}
                                         </Text>
                                         <Text size="sm">
-                                            Stock Awal : {product.initial_stock}
+                                            Stok Awal : {product.initial_stock}
                                         </Text>
                                         <Text size="sm">
-                                            Location : {product.location}
+                                            Lokasi : {product.location}
                                         </Text>
                                     </Stack>
                                 </Grid.Col>

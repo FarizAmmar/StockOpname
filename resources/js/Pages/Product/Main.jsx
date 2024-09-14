@@ -62,7 +62,7 @@ const Product = () => {
                         leftSection={<Plus size={16} />}
                         onClick={() => openNew()}
                     >
-                        Add
+                        Tambah
                     </Button>
                 </section>
             </div>

@@ -23,7 +23,7 @@ class TransactionRequest extends FormRequest
     {
         return [
             'product' => 'required',
-            'transaction_date' => 'required',
+            'transaction_date' => 'required|date_format:Y/m/d',
             'transaction_type' => 'required|string',
             'quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string',
@@ -40,6 +40,7 @@ class TransactionRequest extends FormRequest
         return [
             'product.required' => 'The product field is required.',
             'transaction_date.required' => 'The transaction date is required.',
+            'transaction_date.date_format' => 'The transaction date is required.',
             'transaction_type.required' => 'The transaction type is required.',
             'quantity.required' => 'The quantity field is required.',
             'quantity.integer' => 'The quantity must be a valid number.',

@@ -2,6 +2,7 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import {
     Button,
     Grid,
+    Pagination,
     Paper,
     ScrollArea,
     Table,
@@ -13,81 +14,16 @@ import {
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NewTransaction from "./Partials/NewTransaction";
 import { useDisclosure } from "@mantine/hooks";
 import { Plus, Search } from "lucide-react";
+import dayjs from "dayjs";
 
 // Default transaction view
 const Transaction = () => {
     // Mantine Hooks
     const [newModal, { open: openNew, close: closeNew }] = useDisclosure(false);
-
-    // Table helper
-    const columnHelper = createColumnHelper();
-
-    // Sample data table
-    const data = useMemo(
-        () => [
-            {
-                firstName: "Jane",
-                surname: "Doe",
-                age: 13,
-                gender: "Female",
-            },
-            {
-                firstName: "John",
-                surname: "Doe",
-                age: 43,
-                gender: "Male",
-            },
-            {
-                firstName: "Tom",
-                surname: "Doe",
-                age: 89,
-                gender: "Male",
-            },
-        ],
-        []
-    );
-
-    // Sample Columns
-    const columns = useMemo(
-        () => [
-            columnHelper.accessor((row) => `${row.firstName} ${row.surname}`, {
-                id: "fullName",
-                header: "Full Name",
-            }),
-            columnHelper.accessor("gender", {
-                header: "Gender",
-            }),
-        ],
-        []
-    );
-
-    // Main react table
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    });
-
-    const elements = [
-        { position: 6, mass: 12.011, symbol: "C", name: "Carbon" },
-        { position: 7, mass: 14.007, symbol: "N", name: "Nitrogen" },
-        { position: 39, mass: 88.906, symbol: "Y", name: "Yttrium" },
-        { position: 56, mass: 137.33, symbol: "Ba", name: "Barium" },
-        { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
-    ];
-
-    const rows = elements.map((element) => (
-        <Table.Tr key={element.name}>
-            <Table.Td>{element.position}</Table.Td>
-            <Table.Td>{element.name}</Table.Td>
-            <Table.Td>{element.symbol}</Table.Td>
-            <Table.Td>{element.mass}</Table.Td>
-        </Table.Tr>
-    ));
 
     return (
         <Authenticated title="Transaction">
@@ -112,25 +48,10 @@ const Transaction = () => {
                             </Button>
                         </Grid.Col>
                     </Grid>
-                    <ScrollArea mt={20}>
-                        <Table
-                            striped
-                            highlightOnHover
-                            withTableBorder
-                            withColumnBorders
-                        >
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th>Element position</Table.Th>
-                                    <Table.Th>Element name</Table.Th>
-                                    <Table.Th>Symbol</Table.Th>
-                                    <Table.Th>Atomic mass</Table.Th>
-                                    <Table.Th>Atomic mass</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>{rows}</Table.Tbody>
-                        </Table>
-                    </ScrollArea>
+
+                    {/* Transaction table listing */}
+                    <TransactionLists />
+
                     {/* Pagination and rows */}
                 </Paper>
             </div>
@@ -139,8 +60,131 @@ const Transaction = () => {
             <NewTransaction
                 openTransModal={newModal}
                 closeTransModal={closeNew}
-            ></NewTransaction>
+            />
         </Authenticated>
+    );
+};
+
+const TransactionLists = () => {
+    // Table helper
+    const columnHelper = createColumnHelper();
+    const [data, setData] = useState([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    // Fetch data from the API
+    useEffect(() => {
+        const fetchTransaction = async () => {
+            try {
+                // Fetch record
+                const response = await axios.get(
+                    route("api.transaction.get_data")
+                );
+
+                // Set data and pagination info after fetch
+                setData(response.data.data);
+                setTotalPages(response.data.last_page);
+            } catch (error) {
+                console.error("Error fetching transactions:", error);
+            }
+        };
+
+        fetchTransaction();
+    }, [page]);
+
+    // Initialize columns
+    const columns = [
+        columnHelper.accessor("id", {
+            header: "No",
+            cell: (info) => info.row.index + 1,
+        }),
+        columnHelper.accessor("product.code", {
+            header: "Kode Barang",
+        }),
+        columnHelper.accessor("product.name", {
+            header: "Nama Barang",
+        }),
+        columnHelper.accessor("product.initial_stock", {
+            header: "Stok Awal",
+        }),
+        columnHelper.accessor("quantity", {
+            header: "Jumlah Barang",
+        }),
+        columnHelper.accessor("transaction_date", {
+            header: "Tanggal Transaksi",
+            cell: (info) => dayjs(info.getValue()).format("DD MMM YYYY"),
+        }),
+        columnHelper.accessor("type", {
+            header: "Tipe Transaksi",
+            cell: (info) => (info.getValue() === "in" ? "Masuk" : "Keluar"),
+        }),
+    ];
+
+    // Initialize react table
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
+
+    return (
+        <>
+            <ScrollArea mt={20}>
+                <Table
+                    striped
+                    highlightOnHover
+                    withTableBorder
+                    withColumnBorders
+                >
+                    <Table.Thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <Table.Tr
+                                key={headerGroup.id}
+                                className="text-center"
+                            >
+                                {headerGroup.headers.map((header) => (
+                                    <Table.Th
+                                        key={header.id}
+                                        className="whitespace-nowrap"
+                                    >
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                  header.column.columnDef
+                                                      .header,
+                                                  header.getContext()
+                                              )}
+                                    </Table.Th>
+                                ))}
+                            </Table.Tr>
+                        ))}
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {table.getRowModel().rows.map((row) => (
+                            <Table.Tr key={row.original.id}>
+                                {row.getVisibleCells().map((cell) => (
+                                    <Table.Td key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </Table.Td>
+                                ))}
+                            </Table.Tr>
+                        ))}
+                    </Table.Tbody>
+                </Table>
+            </ScrollArea>
+
+            {/* Pagination Controls */}
+            <div style={{ marginTop: 20, textAlign: "center" }}>
+                <Pagination
+                    page={page}
+                    onChange={setPage}
+                    total={totalPages}
+                    position="center"
+                />
+            </div>
+        </>
     );
 };
 

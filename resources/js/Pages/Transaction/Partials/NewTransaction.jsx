@@ -56,11 +56,12 @@ const NewTransaction = ({ openTransModal, closeTransModal }) => {
                     message: response.props.flash.message,
                     position: "top-center",
                 });
+
+                form.reset();
+                closeTransModal();
             },
             onFinish: () => {
-                form.reset();
                 setLoading(false);
-                closeTransModal();
             },
             onError: (errors) => {
                 if (errors[0] != null) {
@@ -111,6 +112,7 @@ const NewTransaction = ({ openTransModal, closeTransModal }) => {
                                 label="Tanggal Transaksi"
                                 placeholder="Pilih tanggal transaksi"
                                 valueFormat="DD/MM/YYYY"
+                                maxDate={new Date()}
                                 withAsterisk
                                 clearable
                                 {...form.getInputProps("transaction_date")}
@@ -167,9 +169,4 @@ const NewTransaction = ({ openTransModal, closeTransModal }) => {
         </Modal>
     );
 };
-
-const TransactionLists = () => {
-    return <div>List</div>;
-};
-
 export default NewTransaction;

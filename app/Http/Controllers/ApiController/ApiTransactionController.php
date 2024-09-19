@@ -20,13 +20,7 @@ class ApiTransactionController extends Controller
      */
     public function index()
     {
-        try {
-            $transaction = $this->transaction_model->with('product')->latest()->paginate(10);
-
-            return response()->json($transaction);
-        } catch (\Throwable $th) {
-            return response()->json($th->getMessage());
-        }
+        //
     }
 
     /**

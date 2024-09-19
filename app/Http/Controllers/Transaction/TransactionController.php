@@ -24,8 +24,26 @@ class TransactionController extends Controller
      */
     public function index()
     {
+        $perPage = (int) $this->req->input('per_page', 10);
+        $search = $this->req->input('search', '');
+
+        // Query with search condition
+        $transactions = Transaction::with(['product'])
+            ->when($search, function ($query, $search) {
+                return $query->whereHas('product', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('code', 'like', '%' . $search . '%')
+                        ->orWhere('initial_stock', 'like', '%' . $search . '%')
+                        ->orWhere('type', 'like', '%' . $search . '%')
+                        ->orWhere('quantity', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate($perPage)
+            ->appends(['search' => $search]);
+
         // Transaction index view
-        return Inertia::render('Transaction/Main');
+        return Inertia::render('Transaction/Main', compact('transactions', 'search'));
     }
 
     /**

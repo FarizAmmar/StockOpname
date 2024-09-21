@@ -20,10 +20,4 @@ Route::prefix('/api')->middleware('api')->name('api.')->group(function () {
         // Get all record
         Route::get('/', [ApiCategoryController::class, 'index'])->name('get_data');
     });
-
-    // API Transaction
-    Route::prefix('/transaction')->name('transaction.')->group(function () {
-        // Get all record
-        Route::get('/', [ApiTransactionController::class, 'index'])->name('get_data');
-    });
 });

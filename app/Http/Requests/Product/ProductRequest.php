@@ -38,6 +38,7 @@ class ProductRequest extends FormRequest
             'category' => ['required', 'string'],
             'initial_stock' => ['required', 'integer', 'min:1'],
             'location' => ['required', 'string', 'max:255'],
+            'unit' => ['required', 'string', 'max:10'],
             'files' => ['required', 'array', 'min:1'],
             'files.*' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
@@ -68,6 +69,8 @@ class ProductRequest extends FormRequest
             'initial_stock.required' => 'Start stock is required.',
             'initial_stock.integer' => 'Start stock must be an integer.',
             'location.required' => 'Location is required.',
+            'unit.required' => 'Unit is required.',
+            'unit.max' => 'Unit must contain no more than :max letters.',
             'files.required' => 'Please upload at least one image file.',
             'files.min' => 'Please upload at least one image file.',
             'files.*.required' => 'Each image file is required.',

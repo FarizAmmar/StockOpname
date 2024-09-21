@@ -127,6 +127,9 @@ const ProductCard = ({ product }) => {
                                             Stok Awal : {product.initial_stock}
                                         </Text>
                                         <Text size="sm">
+                                            Satuan : {product.unit}
+                                        </Text>
+                                        <Text size="sm">
                                             Lokasi : {product.location}
                                         </Text>
                                     </Stack>

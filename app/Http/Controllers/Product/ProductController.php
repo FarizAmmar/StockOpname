@@ -61,6 +61,7 @@ class ProductController extends Controller
             $product->name = $validatedData['name'];
             $product->location = $validatedData['location'];
             $product->initial_stock = $validatedData['initial_stock'];
+            $product->unit = $validatedData['unit'];
             $product->save();
 
             // Handle file uploads
@@ -137,6 +138,7 @@ class ProductController extends Controller
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
             $product->location = $validatedData['location'];
+            $product->unit = $validatedData['unit'];
             $product->initial_stock = $validatedData['initial_stock'];
 
             // Process the files if they exist

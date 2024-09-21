@@ -40,6 +40,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
             name: "",
             category: "",
             initial_stock: 0,
+            unit: "",
             location: "",
             files: [],
         },
@@ -75,6 +76,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         name: product?.name,
                         category: product?.category_id.toString(),
                         initial_stock: product?.initial_stock,
+                        unit: product?.unit,
                         location: product?.location,
                     });
 
@@ -246,7 +248,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                             <TextInput
                                 label="Kode Produk"
                                 name="code"
-                                placeholder="Enter product code"
+                                placeholder="Masukan kode produk"
                                 maxLength={20}
                                 withAsterisk
                                 disabled
@@ -265,7 +267,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                                 name="name"
                                 maxLength={50}
                                 withAsterisk
-                                placeholder="Enter product name"
+                                placeholder="Masukan nama produk"
                                 {...form.getInputProps("name")}
                                 onChange={(event) =>
                                     form.setFieldValue(
@@ -280,17 +282,33 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                                 }
                             />
                         </Grid.Col>
+
+                        {/* Category */}
                         <Grid.Col span={12}>
                             <Select
                                 label="Kategori"
-                                placeholder="Choose option"
+                                placeholder="Pilih kategori"
                                 data={categories}
                                 withAsterisk
                                 allowDeselect
                                 {...form.getInputProps("category")}
                             />
                         </Grid.Col>
-                        <Grid.Col span={12}>
+
+                        {/* Unit */}
+                        <Grid.Col span={6}>
+                            <TextInput
+                                label="Satuan"
+                                name="unit"
+                                maxLength={50}
+                                withAsterisk
+                                placeholder="Masukan satuan barang"
+                                {...form.getInputProps("unit")}
+                            />
+                        </Grid.Col>
+
+                        {/* Intitial Stock */}
+                        <Grid.Col span={6}>
                             <NumberInput
                                 label="Stok Awal"
                                 name="initial_stock"
@@ -302,11 +320,13 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                                 {...form.getInputProps("initial_stock")}
                             />
                         </Grid.Col>
+
+                        {/* Location */}
                         <Grid.Col span={12}>
                             <TextInput
                                 label="Lokasi"
                                 name="location"
-                                placeholder="Enter product location"
+                                placeholder="Masukan lokasi produk"
                                 withAsterisk
                                 {...form.getInputProps("location")}
                             />

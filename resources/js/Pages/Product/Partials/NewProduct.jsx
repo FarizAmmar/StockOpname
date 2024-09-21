@@ -66,6 +66,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
             name: "",
             category: "",
             initial_stock: 0,
+            unit: "",
             location: "",
             files: [],
         },
@@ -218,9 +219,9 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                         {/* Product Code */}
                         <Grid.Col span={6}>
                             <TextInput
-                                label="Kode Produk"
+                                label="Kode Barang"
                                 name="code"
-                                placeholder="Enter product code"
+                                placeholder="Masukan kode barang"
                                 maxLength={20}
                                 withAsterisk
                                 {...form.getInputProps("code")}
@@ -236,11 +237,11 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                         {/* Product Name */}
                         <Grid.Col span={6}>
                             <TextInput
-                                label="Nama Produk"
+                                label="Nama Barang"
                                 name="name"
                                 maxLength={50}
                                 withAsterisk
-                                placeholder="Enter product name"
+                                placeholder="Masukan nama barang"
                                 {...form.getInputProps("name")}
                                 onChange={(event) => {
                                     form.setFieldValue(
@@ -260,7 +261,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                         <Grid.Col span={12}>
                             <Select
                                 label="Kategori"
-                                placeholder="Choose option"
+                                placeholder="Pilih kategori"
                                 data={categories}
                                 withAsterisk
                                 allowDeselect
@@ -268,8 +269,20 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                             />
                         </Grid.Col>
 
+                        {/* Unit product */}
+                        <Grid.Col span={6}>
+                            <TextInput
+                                label="Satuan"
+                                name="unit"
+                                maxLength={50}
+                                withAsterisk
+                                placeholder="Masukan satuan barang"
+                                {...form.getInputProps("unit")}
+                            />
+                        </Grid.Col>
+
                         {/* Initial stock */}
-                        <Grid.Col span={12}>
+                        <Grid.Col span={6}>
                             <NumberInput
                                 label="Stok Awal"
                                 name="initial_stock"
@@ -287,7 +300,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                             <TextInput
                                 label="Lokasi"
                                 name="location"
-                                placeholder="Enter product location"
+                                placeholder="Masukan lokasi barang"
                                 withAsterisk
                                 {...form.getInputProps("location")}
                             />
@@ -301,7 +314,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                         fullWidth
                         mt="md"
                     >
-                        Buat Produk
+                        Buat Barang
                     </Button>
                 </Stack>
             </form>

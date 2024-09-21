@@ -25,7 +25,7 @@ class AuthenticatedController extends Controller
 
             $request->authenticate();
         } catch (\Throwable $th) {
-            dd($th->getMessage());
+            
             return back()->withErrors($th->getMessage());
         }
     }

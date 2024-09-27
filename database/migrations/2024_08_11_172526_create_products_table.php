@@ -18,10 +18,9 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('code')->unique();
             $table->string('name');
-            $table->string('location');
             $table->string('unit', 10);
             $table->integer('initial_stock');
-            $table->integer('final_stock')->default(0);
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

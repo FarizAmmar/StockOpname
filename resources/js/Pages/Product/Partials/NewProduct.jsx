@@ -18,6 +18,7 @@ import {
     Select,
     Stack,
     Text,
+    Textarea,
     TextInput,
 } from "@mantine/core";
 
@@ -67,7 +68,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
             category: "",
             initial_stock: 0,
             unit: "",
-            location: "",
+            notes: "",
             files: [],
         },
     });
@@ -295,14 +296,13 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                             />
                         </Grid.Col>
 
-                        {/* Location */}
+                        {/* Notes */}
                         <Grid.Col span={12}>
-                            <TextInput
-                                label="Lokasi"
-                                name="location"
-                                placeholder="Masukan lokasi barang"
-                                withAsterisk
-                                {...form.getInputProps("location")}
+                            <Textarea
+                                label="Keterangan Barang"
+                                name="notes"
+                                placeholder="Masukan keterangan barang"
+                                {...form.getInputProps("notes")}
                             />
                         </Grid.Col>
                     </Grid>

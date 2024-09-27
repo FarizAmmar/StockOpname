@@ -59,9 +59,9 @@ class ProductController extends Controller
             $product->category_id = $validatedData['category'];
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
-            $product->location = $validatedData['location'];
             $product->initial_stock = $validatedData['initial_stock'];
             $product->unit = $validatedData['unit'];
+            $product->notes = $validatedData['notes'];
             $product->save();
 
             // Handle file uploads
@@ -69,10 +69,9 @@ class ProductController extends Controller
             if ($files) {
                 foreach ($files as $file) {
                     $originalName = $file->getClientOriginalName();
-                    $path = $file->store('products', 'public');
+                    $path = Storage::disk('public')->putFileAs('products', $file, $originalName);
                     $fileSize = $file->getSize();
                     $extension = $file->getClientOriginalExtension();
-
                     // Create product file record
                     $product_file = new ProductFile();
                     $product_file->product_id = $product->id;
@@ -137,9 +136,9 @@ class ProductController extends Controller
             $product->category_id = $validatedData['category'];
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
-            $product->location = $validatedData['location'];
             $product->unit = $validatedData['unit'];
             $product->initial_stock = $validatedData['initial_stock'];
+            $product->notes = $validatedData['notes'];
 
             // Process the files if they exist
             $files = $request->file('files');
@@ -147,7 +146,7 @@ class ProductController extends Controller
             if ($files) {
                 foreach ($files as $file) {
                     $originalName = $file->getClientOriginalName();
-                    $path = $file->store('products', 'public');
+                    $path = Storage::disk('public')->putFileAs('products', $file, $originalName);
                     $fileSize = $file->getSize();
                     $extension = $file->getClientOriginalExtension();
 

@@ -33,14 +33,13 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'code' => ['required', 'string', 'max:20'],
-            'name' => ['required', 'string', 'max:50'],
+            'code' => ['required', 'max:20'],
+            'name' => ['required', 'max:50'],
             'category' => ['required', 'string'],
             'initial_stock' => ['required', 'integer', 'min:1'],
-            'location' => ['required', 'string', 'max:255'],
-            'unit' => ['required', 'string', 'max:10'],
-            'files' => ['required', 'array', 'min:1'],
-            'files.*' => ['required', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'unit' => ['required', 'max:10'],
+            'notes' => ['max:255'],
+            'files.*' => ['mimes:jpg,jpeg,png', 'max:2048'],
         ];
 
         if ($this->input('is_update')) {
@@ -68,12 +67,9 @@ class ProductRequest extends FormRequest
             'category.required' => 'Category is required.',
             'initial_stock.required' => 'Start stock is required.',
             'initial_stock.integer' => 'Start stock must be an integer.',
-            'location.required' => 'Location is required.',
             'unit.required' => 'Unit is required.',
             'unit.max' => 'Unit must contain no more than :max letters.',
-            'files.required' => 'Please upload at least one image file.',
-            'files.min' => 'Please upload at least one image file.',
-            'files.*.required' => 'Each image file is required.',
+            'notes.max' => 'Notes must contain no more than :max letters.',
             'files.*.mimes' => 'Only jpg, jpeg, and png files are allowed.',
             'files.*.max' => 'File size must not exceed 2MB.',
         ];

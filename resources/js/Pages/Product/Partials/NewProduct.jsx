@@ -18,6 +18,7 @@ import {
     Select,
     Stack,
     Text,
+    Textarea,
     TextInput,
 } from "@mantine/core";
 
@@ -67,7 +68,7 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
             category: "",
             initial_stock: 0,
             unit: "",
-            location: "",
+            notes: "",
             files: [],
         },
     });
@@ -278,6 +279,14 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                                 withAsterisk
                                 placeholder="Masukan satuan barang"
                                 {...form.getInputProps("unit")}
+                                onChange={(event) => {
+                                    const value = event.target.value;
+                                    const regex = /^[A-Za-z\s]*$/;
+
+                                    if (regex.test(value)) {
+                                        form.setFieldValue("unit", value);
+                                    }
+                                }}
                             />
                         </Grid.Col>
 
@@ -295,14 +304,13 @@ const NewProduct = ({ openNewModal, closeNewModal }) => {
                             />
                         </Grid.Col>
 
-                        {/* Location */}
+                        {/* Notes */}
                         <Grid.Col span={12}>
-                            <TextInput
-                                label="Lokasi"
-                                name="location"
-                                placeholder="Masukan lokasi barang"
-                                withAsterisk
-                                {...form.getInputProps("location")}
+                            <Textarea
+                                label="Keterangan Barang"
+                                name="notes"
+                                placeholder="Masukan keterangan barang"
+                                {...form.getInputProps("notes")}
                             />
                         </Grid.Col>
                     </Grid>

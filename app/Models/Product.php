@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -14,9 +15,10 @@ class Product extends Model
     protected $fillable = [
         'name',
         'price',
-        'location',
+        'unit',
         'initial_stock',
         'final_stock',
+        'notes',
     ];
 
     public function category(): BelongsTo
@@ -34,8 +36,8 @@ class Product extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function daily_totals(): HasMany
+    public function final_stocks(): HasMany
     {
-        return $this->hasMany(DailyTotal::class);
+        return $this->hasMany(FinalStock::class);
     }
 }

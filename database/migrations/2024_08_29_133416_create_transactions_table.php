@@ -18,7 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->date('transaction_date');
             $table->enum('type', ['in', 'out']);
-            $table->integer('quantity');
+            $table->integer('quantity')->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();
         });

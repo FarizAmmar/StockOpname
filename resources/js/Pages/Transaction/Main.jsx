@@ -1,23 +1,33 @@
-import { Plus, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, Search, X } from "lucide-react";
 import { useDisclosure } from "@mantine/hooks";
+import { router, usePage } from "@inertiajs/react";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Button, Grid, Paper, TextInput } from "@mantine/core";
+
 import NewTransaction from "./Partials/NewTransaction";
 import TransactionLists from "./Partials/TransactionList";
-import { usePage, router } from "@inertiajs/react";
-import { useState } from "react";
 
 const Transaction = () => {
     const [newModal, { open: openNew, close: closeNew }] = useDisclosure(false);
     const { transactions, search: initialSearch } = usePage().props;
+
+    // Separate local state for the input
+    const [inputValue, setInputValue] = useState(initialSearch || "");
     const [search, setSearch] = useState(initialSearch || "");
 
+    useEffect(() => {
+        if (initialSearch) {
+            setInputValue(initialSearch);
+            setSearch(initialSearch);
+        }
+    }, [initialSearch]);
+
     const handleSearch = () => {
-        router.get(
-            route("transaction.index"),
-            { search },
-            { preserveState: true }
-        );
+        setSearch(inputValue);
+        router.get(route("transaction.index"), {
+            search: inputValue,
+        });
     };
 
     return (
@@ -25,23 +35,32 @@ const Transaction = () => {
             <div className="grid grid-cols-1 gap-1">
                 <Paper p="lg">
                     <Grid>
-                        <Grid.Col span={6}>
+                        <Grid.Col span={4}>
                             <TextInput
                                 type="search"
-                                value={search}
                                 placeholder="Search"
+                                value={inputValue}
                                 leftSection={<Search size={16} />}
-                                onChange={(event) =>
-                                    setSearch(event.currentTarget.value)
+                                rightSection={
+                                    inputValue && (
+                                        <X
+                                            size={16}
+                                            className="cursor-pointer"
+                                            onClick={() => setInputValue("")}
+                                        />
+                                    )
                                 }
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
+                                onChange={(event) =>
+                                    setInputValue(event.currentTarget.value)
+                                }
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter") {
                                         handleSearch();
                                     }
                                 }}
                             />
                         </Grid.Col>
-                        <Grid.Col span={6} className="flex justify-end">
+                        <Grid.Col span={8} className="flex justify-end">
                             <Button
                                 color="rgba(50, 50, 50, 1)"
                                 leftSection={<Plus size={16} />}

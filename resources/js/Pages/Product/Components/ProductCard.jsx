@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
-import { EllipsisVertical, Pencil, Trash } from "lucide-react";
-
+import { EllipsisVertical, Pencil, Trash, ImageIcon } from "lucide-react"; // Tambahkan ImageIcon dari lucide-react
 import { useDisclosure } from "@mantine/hooks";
 import CardLoading from "@/Components/CardLoading";
 import {
@@ -17,11 +15,15 @@ import {
 
 import EditProduct from "../Partials/EditProduct";
 import DeleteProduct from "../Partials/DeleteProduct";
+import DetailProduct from "../Partials/DetailProduct";
 
 // Product card item
 const ProductCard = ({ product }) => {
     // Hook lists
     const [menu, { toggle: toggleMenu }] = useDisclosure(false);
+
+    const [detailModal, { open: openDetail, close: closeDetail }] =
+        useDisclosure(false);
 
     const [editModal, { open: openEdit, close: closeEdit }] =
         useDisclosure(false);
@@ -54,7 +56,7 @@ const ProductCard = ({ product }) => {
     }, [product]);
 
     return (
-        <Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
+        <Grid.Col span={{ base: 12, md: 4, lg: 3 }}>
             <Paper shadow="xs" p="md">
                 {loading ? (
                     <CardLoading />
@@ -62,7 +64,7 @@ const ProductCard = ({ product }) => {
                     <Grid>
                         <Grid.Col span={12}>
                             <Flex justify="space-between">
-                                <Text fz={20} fw={500} mb="xs">
+                                <Text fz={20} fw={500}>
                                     {product.name}
                                 </Text>
                                 <Menu
@@ -104,41 +106,35 @@ const ProductCard = ({ product }) => {
                             </Flex>
                         </Grid.Col>
                         <Grid.Col span={12}>
-                            <Grid>
-                                <Grid.Col span={5}>
+                            <a className="cursor-pointer" onClick={openDetail}>
+                                {product.product_files[0] ? (
                                     <Image
+                                        h={250}
                                         radius="sm"
-                                        h={150}
-                                        w={150}
-                                        src={
-                                            product.product_files[0]
-                                                ? `/storage/${product.product_files[0].path}`
-                                                : ""
-                                        }
+                                        src={`/storage/${product.product_files[0].path}`}
                                         alt={product.name}
                                     />
-                                </Grid.Col>
-                                <Grid.Col span={7}>
-                                    <Stack spacing="xs">
-                                        <Text size="sm">
-                                            Kategori : {product.category.name}
-                                        </Text>
-                                        <Text size="sm">
-                                            Stok Awal : {product.initial_stock}
-                                        </Text>
-                                        <Text size="sm">
-                                            Satuan : {product.unit}
-                                        </Text>
-                                        <Text size="sm">
-                                            Lokasi : {product.location}
-                                        </Text>
-                                    </Stack>
-                                </Grid.Col>
-                            </Grid>
+                                ) : (
+                                    <Flex
+                                        justify="center"
+                                        align="center"
+                                        style={{ height: 250 }}
+                                    >
+                                        <ImageIcon size={100} color="gray" />
+                                    </Flex>
+                                )}
+                            </a>
                         </Grid.Col>
                     </Grid>
                 )}
             </Paper>
+
+            {/* Modal Detail */}
+            <DetailProduct
+                openDetailModal={detailModal}
+                closeDetailModal={closeDetail}
+                product_id={product.id}
+            />
 
             {/* Modal Edit*/}
             <EditProduct

@@ -18,6 +18,7 @@ import {
     Select,
     Stack,
     Text,
+    Textarea,
     TextInput,
 } from "@mantine/core";
 
@@ -41,7 +42,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
             category: "",
             initial_stock: 0,
             unit: "",
-            location: "",
+            notes: "",
             files: [],
         },
     });
@@ -77,7 +78,7 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                         category: product?.category_id.toString(),
                         initial_stock: product?.initial_stock,
                         unit: product?.unit,
-                        location: product?.location,
+                        notes: product?.notes,
                     });
 
                     if (product.product_files) {
@@ -304,6 +305,14 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                                 withAsterisk
                                 placeholder="Masukan satuan barang"
                                 {...form.getInputProps("unit")}
+                                onChange={(event) => {
+                                    const value = event.target.value;
+                                    const regex = /^[A-Za-z\s]*$/;
+
+                                    if (regex.test(value)) {
+                                        form.setFieldValue("unit", value);
+                                    }
+                                }}
                             />
                         </Grid.Col>
 
@@ -321,14 +330,13 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                             />
                         </Grid.Col>
 
-                        {/* Location */}
+                        {/* Notes */}
                         <Grid.Col span={12}>
-                            <TextInput
-                                label="Lokasi"
-                                name="location"
-                                placeholder="Masukan lokasi produk"
-                                withAsterisk
-                                {...form.getInputProps("location")}
+                            <Textarea
+                                label="Keterangan Barang"
+                                name="notes"
+                                placeholder="Masukan keterangan barang"
+                                {...form.getInputProps("notes")}
                             />
                         </Grid.Col>
                     </Grid>

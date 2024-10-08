@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\ProductRequest;
+use Inertia\Inertia;
 use App\Models\Product;
 use App\Models\ProductFile;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-use Inertia\Inertia;
+use App\Http\Requests\Product\ProductRequest;
 
 class ProductController extends Controller
 {
@@ -28,12 +28,14 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $products = $this->product_model
+            ->latest()
+            ->with(['category', 'product_files'])
+            ->get();
+
         // Product index view
         return Inertia::render('Product/Main', [
-            'products' => $this->product_model
-                ->latest()
-                ->with(['category', 'product_files'])
-                ->get(),
+            'products' => $products,
         ]);
     }
 
@@ -59,25 +61,24 @@ class ProductController extends Controller
             $product->category_id = $validatedData['category'];
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
-            $product->location = $validatedData['location'];
             $product->initial_stock = $validatedData['initial_stock'];
             $product->unit = $validatedData['unit'];
+            $product->notes = $validatedData['notes'];
             $product->save();
 
             // Handle file uploads
             $files = $request->file('files');
             if ($files) {
                 foreach ($files as $file) {
-                    $originalName = $file->getClientOriginalName();
-                    $path = $file->store('products', 'public');
+                    $extension = $file->getClientOriginalExtension();
+                    $file_name = date('Ymd_His') . '.' . $extension;
+                    $path = Storage::disk('public')->putFileAs('products', $file, $file_name);
                     $fileSize = $file->getSize();
                     $extension = $file->getClientOriginalExtension();
-
                     // Create product file record
                     $product_file = new ProductFile();
                     $product_file->product_id = $product->id;
-                    $product_file->file_name = basename($path);
-                    $product_file->original_name = $originalName;
+                    $product_file->file_name = $file->getClientOriginalName();
                     $product_file->file_size = $fileSize;
                     $product_file->ext = $extension;
                     $product_file->path = $path;
@@ -137,40 +138,34 @@ class ProductController extends Controller
             $product->category_id = $validatedData['category'];
             $product->code = $validatedData['code'];
             $product->name = $validatedData['name'];
-            $product->location = $validatedData['location'];
             $product->unit = $validatedData['unit'];
             $product->initial_stock = $validatedData['initial_stock'];
+            $product->notes = $validatedData['notes'];
 
             // Process the files if they exist
             $files = $request->file('files');
 
             if ($files) {
                 foreach ($files as $file) {
-                    $originalName = $file->getClientOriginalName();
-                    $path = $file->store('products', 'public');
-                    $fileSize = $file->getSize();
                     $extension = $file->getClientOriginalExtension();
-
-                    // Check if a file already exists
+                    $fileName = date('Ymd_His') . '.' . $extension;
+                    $path = Storage::disk('public')->putFileAs('products', $file, $fileName);
+                    $fileSize = $file->getSize();
                     $existingFile = $product->product_files()->first();
 
-                    if ($existingFile && ($existingFile->original_name != $originalName || $existingFile->file_size !== $fileSize || $existingFile->ext !== $extension)) {
-                        // Delete the old file
+                    if ($existingFile->exists()) {
                         Storage::disk('public')->delete($existingFile->path);
 
                         // Update the existing file record
-                        $existingFile->file_name = basename($path);
-                        $existingFile->original_name = $originalName;
+                        $existingFile->file_name = $fileName;
                         $existingFile->file_size = $fileSize;
                         $existingFile->ext = $extension;
                         $existingFile->path = $path;
                         $existingFile->save();
                     } else {
-                        // Create a new product file record if none exists with the same name
                         $productFile = new ProductFile();
                         $productFile->product_id = $product->id;
-                        $productFile->file_name = basename($path);
-                        $productFile->original_name = $originalName;
+                        $productFile->file_name = $fileName;
                         $productFile->file_size = $fileSize;
                         $productFile->ext = $extension;
                         $productFile->path = $path;

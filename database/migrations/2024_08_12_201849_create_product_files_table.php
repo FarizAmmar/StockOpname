@@ -17,7 +17,6 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string('file_name');
-            $table->string('original_name');
             $table->string('file_size');
             $table->string('ext');
             $table->string('path');

@@ -305,6 +305,14 @@ const EditProduct = ({ openEditModal, closeEditModal, product_id }) => {
                                 withAsterisk
                                 placeholder="Masukan satuan barang"
                                 {...form.getInputProps("unit")}
+                                onChange={(event) => {
+                                    const value = event.target.value;
+                                    const regex = /^[A-Za-z\s]*$/;
+
+                                    if (regex.test(value)) {
+                                        form.setFieldValue("unit", value);
+                                    }
+                                }}
                             />
                         </Grid.Col>
 

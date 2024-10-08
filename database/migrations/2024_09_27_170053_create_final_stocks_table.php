@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id');
             $table->date('final_date');
-            $table->date('final_stock');
+            $table->integer('final_stock')->default(0);
             $table->timestamps();
         });
     }

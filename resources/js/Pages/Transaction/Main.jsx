@@ -33,46 +33,10 @@ const Transaction = () => {
     return (
         <Authenticated title="Transaction">
             <div className="grid grid-cols-1 gap-1">
-                <Paper p="lg">
-                    <Grid>
-                        <Grid.Col span={4}>
-                            <TextInput
-                                type="search"
-                                placeholder="Search"
-                                value={inputValue}
-                                leftSection={<Search size={16} />}
-                                rightSection={
-                                    inputValue && (
-                                        <X
-                                            size={16}
-                                            className="cursor-pointer"
-                                            onClick={() => setInputValue("")}
-                                        />
-                                    )
-                                }
-                                onChange={(event) =>
-                                    setInputValue(event.currentTarget.value)
-                                }
-                                onKeyDown={(event) => {
-                                    if (event.key === "Enter") {
-                                        handleSearch();
-                                    }
-                                }}
-                            />
-                        </Grid.Col>
-                        <Grid.Col span={8} className="flex justify-end">
-                            <Button
-                                color="rgba(50, 50, 50, 1)"
-                                leftSection={<Plus size={16} />}
-                                onClick={() => openNew()}
-                            >
-                                Buat
-                            </Button>
-                        </Grid.Col>
-                    </Grid>
-
-                    <TransactionLists transaction={transactions} />
-                </Paper>
+                <TransactionLists
+                    transaction={transactions}
+                    openNew={openNew}
+                />
             </div>
 
             <NewTransaction
